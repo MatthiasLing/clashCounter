@@ -1,12 +1,16 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Clash Counter
+Clash Royale companion web application deceloped using React.  Uses voice recognition from user to track opponent's elixir and card cycle based on saying troop names out loud.  Uses JS SpeechRecognition web api and Clash Royale api.
 
-## Clash Counter
-React web application designed to track opponent's elixir and card cycle with JS SpeechRecognition web API - say what your opponent is putting down
-
-# To Do:
-    • Connect to mySQL database, track user logins and record their data
-    • Create UI
-    • Use Ajax to make requests to Clash API, get user data
-    • Create cycle calculation algorithm
-    • Elixir bar calgulation and visualization
+## Completed:
+    • Called Clash Royale API to download all cards
+    • Preprocessed all card data to lower case with elixir cost field added
+    • Successful voice recognition mapping to corresponding card
+## To Do:
+    • Fix cycle detection algorithm
+    • Elixir bar calculation and visualization
+    • Create UI with cards in hand displayed
+    • Work out edge cases - elixir collector, elixir golem, mirror
+    • Store user data - player ID and improve recognition based on pronounciation aliases
+    • Host on AWS
+    
 
