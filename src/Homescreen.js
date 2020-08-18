@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import blank from './blankcard.png';
 
 //------------------------SPEECH RECOGNITION-----------------------------
 
@@ -16,70 +17,50 @@ recognition.lang = 'en-US'
 //------------------------COMPONENT-----------------------------
 
 
-var id = 0;
-var url = '';
 var deck = [];
-var inHand = [0,0,0,0];
+var inHand = [0, 0, 0, 0];
 var inCycle = [];
 
-var allCards = require('./cards.json');
+let allCards = require('./cards.json');
 
-function searchCards(str){
+function searchArr(str, arr) {
+  var query = str.toLowerCase();
 
-    //basic preprocessing
-    var query = str.toLowerCase();
-    // console.log("query: " + query);
+  for (var i = 0; i < arr.length; i++) {
+    if (query === arr[i].name) {
+      var card = arr[i];
 
-    for (var i = 0 ; i< allCards.items.length; i++){
-      
-        if(query === allCards.items[i].name){
-            
-            //changes display
-            url = allCards.items[i].iconUrls.medium;
-            document.getElementById("myImg").src = url;
+      //only add cards when deck < 8 and if not duplicate
+      if (deck.length < 8) {
+        if (!deck.includes(card)) {
+          deck.push(card);
+        }
+      }
+      //if there's a full cycle
+      //this for loop basically tells where to put the next card in queue
+      if (inCycle.length == 4) {
 
-            //add card to deck if not in there yet
-            if (!deck.includes(allCards.items[i]) ){
+        var index = inHand.indexOf(card);
 
-                //not yet 8 cards in deck
-                if (deck.length < 8) {
-                    deck.push(allCards.items[i]);
-                }
-            }
-                //if there's a full cycle
-                //this for loop basically tells where to put the next card in queue
-                if (inCycle.length == 4){
-                    
-                    var index = inHand.indexOf(allCards.items[i])[0];
+        //the card is not the in the hand - then replace the first empty slot
+        if (index < 0) {
+          index = inHand.indexOf(0);
+        }
 
-                    //the card is not the in the hand - then replace the first empty slot
-                    if (index < 0){
-                        index = inHand.indexOf(0)[0];
-                    }
-                    
+        //TODO: handle error when card not in deck is said
+        if (index >= 0) {
+          inHand[index] = inCycle.pop();
+          document.getElementById("myImg" + index.toString()).src = inHand[index].iconUrls.medium;
+        }
+      }
 
-                    inHand[index] = inCycle.pop();
-                    console.log("index:")
-                    console.log(inHand[index]);
-                                     
-                }
-                console.log("splicing:")
-                console.log(allCards.items[i]);
-                //don't add duplicates
-                if (inCycle.indexOf(allCards.items[i][0])<0){
-                    inCycle.splice(0,0, allCards.items[i]);  
-                }
-                console.log(inCycle); 
+      if (inCycle.indexOf(card) < 0) {
+        inCycle.splice(0, 0, card);
+      }
+      break;
 
-
-                // console.log("in Hand: ");
-                // console.log(inHand);
-                // console.log("in cycle:");
-                // console.log(inCycle);
-            break;
-        } 
     }
-    console.log(deck);
+  }
 }
 
 
@@ -103,7 +84,6 @@ class Speech extends Component {
   handleListen() {
 
     // console.log('listening?', this.state.listening)
-
     if (this.state.listening) {
       recognition.start()
       recognition.onend = () => {
@@ -119,7 +99,7 @@ class Speech extends Component {
     }
 
     recognition.onstart = () => {
-    //   console.log("Listening!")
+      //   console.log("Listening!")
     }
 
     let finalTranscript = ''
@@ -128,35 +108,41 @@ class Speech extends Component {
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
-        
-        if (event.results[i].isFinal){ 
-            if (transcript.length > 0){
-                searchCards(transcript);
-              }
-            finalTranscript += transcript + ' ';}
+
+        if (event.results[i].isFinal) {
+          if (transcript.length > 0) {
+            if (deck.length == 8) {
+              searchArr(transcript, deck);
+            } else {
+              searchArr(transcript, allCards.items);
+            }
+          }
+          //was a += before
+          finalTranscript = transcript + ' ';
+        }
         else interimTranscript += transcript;
       }
       document.getElementById('interim').innerHTML = interimTranscript
       document.getElementById('final').innerHTML = finalTranscript
 
-    //-------------------------COMMANDS------------------------------------
+      //-------------------------COMMANDS------------------------------------
 
       const transcriptArr = finalTranscript.split(' ')
       const stopCmd = transcriptArr.slice(-3, -1).join(' ');
 
-      if (stopCmd[0] === 'stop' && stopCmd[1] === 'listening'){
+      if (stopCmd[0] === 'stop' && stopCmd[1] === 'listening') {
         recognition.stop()
         recognition.onend = () => {
-        //   console.log('Stopped listening per command')
+          //   console.log('Stopped listening per command')
           const finalText = transcriptArr.slice(0, -3).join(' ')
           //The Shit I added
           document.getElementById('final').innerHTML = finalText
         }
       }
     }
-    
-  //-----------------------------------------------------------------------
-    
+
+    //-----------------------------------------------------------------------
+
     recognition.onerror = event => {
       console.log("Error occurred in recognition: " + event.error)
     }
@@ -166,19 +152,22 @@ class Speech extends Component {
     return (
       <div style={container}>
         <button id='microphone-btn' style={button} onClick={this.toggleListen}>
-            Start 
+          Start
         </button>
         <div id='interim' style={interim}></div>
         <div id='final' style={final}></div>
-        <img  id="myImg" 
-      src= {url}
-    //   style="width:138.5; height: 165px;"
-      alt="new"
-      />
+        <div class="row" display="flex">
+          <img id="myImg0" src={blank} alt="" />
+          <img id="myImg1" src={blank} alt="" />
+          <img id="myImg2" src={blank} alt="" />
+          <img id="myImg3" src={blank} alt="" />
+        </div>
+
       </div>
     )
   }
 }
+
 
 export default Speech
 
@@ -186,6 +175,7 @@ export default Speech
 //-------------------------CSS------------------------------------
 
 const styles = {
+
   container: {
     display: 'flex',
     flexDirection: 'column',
