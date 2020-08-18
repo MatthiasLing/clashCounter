@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/98894
 import './App.css';
-import Loginscreen from './Loginscreen'
 import Speech from './Homescreen'
 
 class App extends Component {
@@ -11,22 +10,22 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state={
-      loginPage:[],
-      uploadScreen:[]
+      homePage:null,
+
     }
   }
   componentWillMount(){
-    var loginPage =[];
-    loginPage.push(<Speech parentContext={this}/>);
+    // var pages =[];
+    //     pages.push(<Speech parentContext={this}/>);
+
     this.setState({
-                  loginPage:loginPage
+                  homePage:<Speech parentContext={this}/>
                     })
   }
   render() {
     return (
-      <div className="App">
-        {this.state.loginPage}
-        {this.state.uploadScreen}
+      <div className="Speech">
+        {this.state.homePage}
       </div>
     );
   }

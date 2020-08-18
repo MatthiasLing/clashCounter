@@ -3,9 +3,6 @@ import blank from './blankcard.png';
 
 //------------------------SPEECH RECOGNITION-----------------------------
 
-//  var speechRecognition = SpeechRecognition() //|| webkitSpeechRecognition
-//  var recognition = new SpeechRecognition()
-
 var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 var recognition = new SpeechRecognition()
 
@@ -38,7 +35,7 @@ function searchArr(str, arr) {
       }
       //if there's a full cycle
       //this for loop basically tells where to put the next card in queue
-      if (inCycle.length == 4) {
+      if (inCycle.length === 4) {
 
         var index = inHand.indexOf(card);
 
@@ -111,7 +108,7 @@ class Speech extends Component {
 
         if (event.results[i].isFinal) {
           if (transcript.length > 0) {
-            if (deck.length == 8) {
+            if (deck.length === 8) {
               searchArr(transcript, deck);
             } else {
               searchArr(transcript, allCards.items);
@@ -157,10 +154,10 @@ class Speech extends Component {
         <div id='interim' style={interim}></div>
         <div id='final' style={final}></div>
         <div class="row" display="flex">
-          <img id="myImg0" src={blank} alt="" />
-          <img id="myImg1" src={blank} alt="" />
-          <img id="myImg2" src={blank} alt="" />
-          <img id="myImg3" src={blank} alt="" />
+          <img id="myImg0" src={blank} alt="" width="138.5" height="165"/>
+          <img id="myImg1" src={blank} alt="" width="138.5" height="165"/>
+          <img id="myImg2" src={blank} alt="" width="138.5" height="165"/>
+          <img id="myImg3" src={blank} alt="" width="138.5" height="165"/>
         </div>
 
       </div>
