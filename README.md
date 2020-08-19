@@ -5,12 +5,16 @@ Clash Royale companion web application deceloped using React.  Uses voice recogn
     • Called Clash Royale API to download all cards
     • Preprocessed all card data to lower case with elixir cost field added
     • Successful voice recognition mapping to corresponding card
-## To Do:
     • Fix cycle detection algorithm
-    • Elixir bar calculation and visualization
     • Create UI with cards in hand displayed
-    • Work out edge cases - elixir collector, elixir golem, mirror
+    • Elixir bar calculation
+    • Manual override and adding elixir 
+
+## To Do:
+    • Elixir bar visualization
+    • Work out edge cases - mirror
     • Store user data - player ID and improve recognition based on pronounciation aliases
+    • Node JS
     • Host on AWS
     
 
