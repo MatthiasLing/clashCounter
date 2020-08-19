@@ -1,9 +1,6 @@
 import React, { Component } from "react"
 import blank from './blankcard.png';
-import Background from './background.jpg';
-
-import CircleProgressBarBase from './progressBar'
-import CircleProgressBar from './progress'
+//import Background from './background.jpg';
 
 
 //------------------------SPEECH RECOGNITION-----------------------------
@@ -31,6 +28,8 @@ class Speech extends Component {
   constructor() {
     super()
     this.state = {
+      isLoading: true,
+      cardArray : [],
       elixir: 5,
       elapsedTime: null,
       timeID: null,
@@ -42,6 +41,17 @@ class Speech extends Component {
     this.handleListen = this.handleListen.bind(this)
   }
 
+  //string and one card
+  isAlias(name, reference){    
+    for (var i = 0; i<reference.name.length; i++){
+      //reference.name is a list
+      if (name === reference.name[i]){
+        return true;
+      }
+    }
+    return false;
+
+  }
   isPlayable(card) {
     console.log(inCycle.indexOf(card));
     //can't play if too expensive
@@ -64,7 +74,7 @@ class Speech extends Component {
 
     //check cycle length 
     //if cycle length == 4 -> replace current care
-    if (inCycle.length == 4) {
+    if (inCycle.length === 4) {
       index = inHand.indexOf(card);
       if (index < 0) {
         index = inHand.indexOf(0);
@@ -94,7 +104,7 @@ class Speech extends Component {
     var manualAddCheck = query.split(' ');
     //check for manual add
 
-    if (manualAddCheck[0] == '+' || manualAddCheck[0] == "plus"){
+    if (manualAddCheck[0] === '+' || manualAddCheck[0] === "plus"){
       //if it is a number
       if (!isNaN(+parseInt(manualAddCheck[1]))){
         this.setState(({ elixir }) => ({ elixir: Math.min(10, elixir + +parseInt(manualAddCheck[1])) }));
@@ -102,7 +112,7 @@ class Speech extends Component {
 
     }
 
-    if (manualAddCheck[0] == 'override' ){
+    if (manualAddCheck[0] === 'override' ){
       //if it is a number
       if (!isNaN(+parseInt(manualAddCheck[1]))){
         this.setState(({ elixir }) => ({ elixir: Math.min(10, +parseInt(manualAddCheck[1])) }));
@@ -112,12 +122,13 @@ class Speech extends Component {
 
     document.getElementById('final').style.color = "black";
     for (var i = 0; i < arr.length; i++) {
-      if (query === arr[i].name) {
+      if (this.isAlias(query, arr[i])) {
+
         var card = arr[i];
         //only add cards when deck < 8 and if not duplicate
         if (deck.length < 8) {
           if (!deck.includes(card)) {
-            console.log("adding " + card.name + " to deck");
+            console.log("adding " + card.name[0] + " to deck");
             deck.push(card);
           }
         }
@@ -143,7 +154,7 @@ class Speech extends Component {
     }
     else if (time !== 0 && time >= 1200 && time % 14 === 0) {
 
-      if (time == 1200) {
+      if (time === 1200) {
         this.setState(({ elixir }) => ({ elixir: Math.min(10, elixir + 1) }));
       }
       this.setState(({ elixir }) => ({ elixir: Math.min(10, elixir + 1) }));
@@ -234,6 +245,7 @@ class Speech extends Component {
   }
 
   render() {
+    const isLoading = this.state.isLoading;
     return (
       <div style={{
         backgroundImage: 'url(' + require('./background.jpg') + ')',
@@ -295,15 +307,15 @@ const styles = {
     textAlign: 'center',
   },
 
-  background: {
-    color: 'blue',
-    backgroundImage: `require(${Background})`,
-    display: 'flex',
-    backgroundSize: 'cover',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center'
-  },
+  // background: {
+  //   color: 'blue',
+  //   backgroundImage: `require(${Background})`,
+  //   display: 'flex',
+  //   backgroundSize: 'cover',
+  //   flexDirection: 'column',
+  //   alignItems: 'center',
+  //   textAlign: 'center'
+  // },
   container: {
     color: 'blue',
     display: 'flex',
@@ -338,4 +350,4 @@ const styles = {
   }
 }
 
-const { logo, background, container, button, interim, final } = styles
+const { logo, container, button, interim, final } = styles
