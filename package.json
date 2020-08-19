@@ -15,6 +15,7 @@
     "jquery": "^3.5.1",
     "material-ui": "^0.20.2",
     "npm-check-unused": "^6.0.0",
+    "prop-types": "^15.7.2",
     "rc-progress": "^3.0.0",
     "react": "^16.13.1",
     "react-circular-progressbar": "^2.0.3",
@@ -22,7 +23,8 @@
     "react-move": "^6.4.0",
     "react-scripts": "3.4.3",
     "react-tap-event-plugin": "^3.0.3",
-    "reactstrap": "^8.5.1"
+    "reactstrap": "^8.5.1",
+    "styled-components": "^5.1.1"
   },
   "scripts": {
     "start": "PORT=8888 react-scripts start",
