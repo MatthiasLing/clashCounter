@@ -1,6 +1,10 @@
 import React, { Component } from "react"
 import blank from './blankcard.png';
 //import Background from './background.jpg';
+import { isAlias, isCommand } from './engine';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { Row } from "reactstrap";
 
 
 //------------------------SPEECH RECOGNITION-----------------------------
@@ -15,21 +19,44 @@ recognition.lang = 'en-US'
 
 //------------------------COMPONENT-----------------------------
 
+var mode = 1;
+var tick = 0;
+var loading = 0;
 var deck = [];
 var inHand = [0, 0, 0, 0];
 var inCycle = [];
 var playHistory = [];
-var counting = false;
-let allCards = require('./cards.json');
 var justPlayed = '';
+var allCards;
+var counting = false;
+var buttonText = "Start";
+var buttonColor = "#42f5dd";
+function Example(props) {
+  return (
+    <div style={{
+      marginBottom: 10, fontFamily: 'Clashfont',
+      color: 'fuchsia', fontSize: "40px",
+    }}>
+      <div style={{ marginTop: 0, display: "flex" }}>
+        <div style={{ width: "30%" }}>{props.children}</div>
+        <div style={{ width: "70%" }}>
+          <h3 className="h5">{props.label}</h3>
+          <p>{props.description}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 class Speech extends Component {
 
   //TODO: fix repetition of cards that were just said 
   constructor() {
     super()
     this.state = {
-      isLoading: true,
-      cardArray : [],
+      percentage: 0,
+      isLoading: false,
+      cardArray: require('./cards.json'),
       elixir: 5,
       elapsedTime: null,
       timeID: null,
@@ -39,19 +66,14 @@ class Speech extends Component {
     this.startCounting = this.startCounting.bind(this);
     this.toggleListen = this.toggleListen.bind(this)
     this.handleListen = this.handleListen.bind(this)
+
+    //TODO: ensure this is right
+    allCards = this.state.cardArray;
+
   }
 
   //string and one card
-  isAlias(name, reference){    
-    for (var i = 0; i<reference.name.length; i++){
-      //reference.name is a list
-      if (name === reference.name[i]){
-        return true;
-      }
-    }
-    return false;
 
-  }
   isPlayable(card) {
     console.log(inCycle.indexOf(card));
     //can't play if too expensive
@@ -87,42 +109,33 @@ class Speech extends Component {
     inCycle.splice(0, 0, card);
     //subtract elixir
     var newElixir = this.state.elixir - card.elixir;
+    if (card.name[0] == "mirror") {
+      newElixir -= playHistory.pop().elixir;
+    }
     this.setState({ elixir: newElixir });
     //add to history
     playHistory.push(card);
     //change text color
-    document.getElementById('final').style.color = "lawngreen";
+    document.getElementById('interim').style.color = "#79ff12";
     //set image
     justPlayed = card.iconUrls.medium;
     document.getElementById("justPlayed").src = justPlayed;
   }
 
-
-  //TODO: two skeletons in hand - don't replay cards
   searchArr(str, arr) {
     var query = str.toLowerCase();
     var manualAddCheck = query.split(' ');
+
     //check for manual add
-
-    if (manualAddCheck[0] === '+' || manualAddCheck[0] === "plus"){
-      //if it is a number
-      if (!isNaN(+parseInt(manualAddCheck[1]))){
-        this.setState(({ elixir }) => ({ elixir: Math.min(10, elixir + +parseInt(manualAddCheck[1])) }));
-      }
-
+    var command = isCommand(manualAddCheck, this.state.elixir);
+    if (command >= 0) {
+      this.setState(({ elixir }) => ({ elixir: command }));
     }
 
-    if (manualAddCheck[0] === 'override' ){
-      //if it is a number
-      if (!isNaN(+parseInt(manualAddCheck[1]))){
-        this.setState(({ elixir }) => ({ elixir: Math.min(10, +parseInt(manualAddCheck[1])) }));
-      }
+    document.getElementById('interim').style.color = "black";
 
-    }
-
-    document.getElementById('final').style.color = "black";
     for (var i = 0; i < arr.length; i++) {
-      if (this.isAlias(query, arr[i])) {
+      if (isAlias(query, arr[i])) {
 
         var card = arr[i];
         //only add cards when deck < 8 and if not duplicate
@@ -145,27 +158,46 @@ class Speech extends Component {
   }
 
   countUp() {
-
-    //: elixir goes over 10 in double elixir mode
+    this.setState(({ elapsedTime }) => ({ elapsedTime: elapsedTime + 1 }));
     var time = this.state.elapsedTime;
+    if (this.state.elixir != 10) {
+      tick++;
+    } else {
+      tick = 0;
+    }
 
-    if (time !== 0 && time >= 3000 && time % 9 === 0) {
+
+
+
+
+    if (time !== 0 && time >= 3000 && tick % 9 === 0) {
+      mode = 3;
       this.setState(({ elixir }) => ({ elixir: Math.min(10, elixir + 1) }));
     }
-    else if (time !== 0 && time >= 1200 && time % 14 === 0) {
-
+    else if (time !== 0 && time >= 1200 && tick % 14 === 0) {
+      mode = 2;
       if (time === 1200) {
         this.setState(({ elixir }) => ({ elixir: Math.min(10, elixir + 1) }));
       }
       this.setState(({ elixir }) => ({ elixir: Math.min(10, elixir + 1) }));
-    } else if (time !== null && time !== 0 && time % 28 === 0) {
+    } else if (time !== null && time !== 0 && tick % 28 === 0) {
       this.setState(({ elixir }) => ({ elixir: Math.min(10, elixir + 1) }));
     }
 
+    if (mode === 1) {
+      if (tick == 28) {
+        tick = 0;
 
+      } else {
+        loading = ((tick % 28) / 28) * 100;
 
-    this.setState(({ elapsedTime }) => ({ elapsedTime: elapsedTime + 1 }));
+      }
+    } else if (mode == 2) {
+      loading = 100 * ((this.state.elapsedTime % 14) / 14);
 
+    } else {
+      loading = 100 * ((this.state.elapsedTime % 9) / 9);
+    }
   }
 
   zeroPad(num) {
@@ -219,8 +251,8 @@ class Speech extends Component {
         }
         else interimTranscript += transcript;
       }
-      document.getElementById('interim').innerHTML = interimTranscript
-      document.getElementById('final').innerHTML = finalTranscript
+      // document.getElementById('interim').innerHTML = interimTranscript
+      document.getElementById('interim').innerHTML = finalTranscript
 
       //-------------------------COMMANDS------------------------------------
 
@@ -232,7 +264,7 @@ class Speech extends Component {
           //   console.log('Stopped listening per command')
           const finalText = transcriptArr.slice(0, -3).join(' ')
           //The Shit I added
-          document.getElementById('final').innerHTML = finalText
+          document.getElementById('interim').innerHTML = finalText
         }
       }
     }
@@ -246,6 +278,10 @@ class Speech extends Component {
 
   render() {
     const isLoading = this.state.isLoading;
+    // const cardArray = this.state.cardArray;
+    if (isLoading) return (<div>Loading ...</div>)
+    let cardArray = [];
+    var x = 3;
     return (
       <div style={{
         backgroundImage: 'url(' + require('./background.jpg') + ')',
@@ -254,39 +290,76 @@ class Speech extends Component {
         width: '100%',
         opacity: '1'
       }}>
-        <div
-          style={logo}
-        >Clash Counter</div>
+        <div style={logo}>
+          <div style={{ color: '#b7c3c7', fontFamily: 'Clashfont', fontSize: '40px' }}>Clash</div>
+          <div style={{ color: 'gold', fontFamily: 'Clashfont', fontSize: '40px' }}>Counter</div>
+        </div>
+        
+        <div style={timer}>
+            {this.zeroPad(Math.floor(this.state.elapsedTime / 600)) 
+              + ":" + this.zeroPad(Math.floor((this.state.elapsedTime / 10) % 60))}</div>
         <div style={container}>
-          <div>{this.zeroPad(Math.floor(this.state.elapsedTime / 600)) + ":" + this.zeroPad(Math.floor((this.state.elapsedTime / 10) % 60))}</div>
-          <img id="justPlayed" src={blank} alt="" width="69.25" height="82.5" />
-
-          <button id='microphone-btn' style={button} onClick={() => {
-            this.toggleListen();
-            if (counting === false) {
-              this.startCounting();
-              counting = !counting;
-            }
-          }}>
-            Start
-        </button>
-          <div style={{
+        <div style = {{
+            height: 220,
+            width: 220,
             fontFamily: 'Clashfont',
-            color: 'fuchsia', fontSize: "60px"
-          }}>{this.state.elixir}</div>
+      color: 'fuchsia', fontSize: "40px",
+      textShadow: '3.5px 3.5px 0.5em black',
+      marginTop: "50px",
+      marginBottom: "20px",
 
-          <div id='interim' style={interim}></div>
-          <div id='final' style={final}></div>
+          }}>
+            <CircularProgressbar
+              value={this.state.elixir === 10 ? 100 : loading}
+              // background
+              // backgroundPadding={0}
+              text={this.state.elixir}
+              styles={buildStyles({
+                pathTransitionDuration: 0,
+                
+
+                backgroundColor: "#A8A860",
+                margin: "auto",
+                textSize: '40px',
+                textColor: "fuchsia",
+                pathColor: "fuchsia",
+                trailColor: "darkgray",
+              })}
+            />
+          </div>
+
+      <div class="row" style = {row} display="flex">
+      <img id="justPlayed" src={blank} alt="" width="69.25" height="82.5" margin= "auto"  />
+      <div id='interim' style={interim}></div>
+
+      </div>
+      
+ 
+          {/* <div id='final' style={final}></div> */}
           <div class="row" display="flex">
             <img id="myImg0" src={blank} alt="" width="138.5" height="165" />
             <img id="myImg1" src={blank} alt="" width="138.5" height="165" />
             <img id="myImg2" src={blank} alt="" width="138.5" height="165" />
             <img id="myImg3" src={blank} alt="" width="138.5" height="165" />
           </div>
+          
+          <button id='microphone-btn'
+            style={button} onClick={() => {
+              this.toggleListen();
+              if (buttonText === "Start" || buttonText ==='Start Listening'){
+                buttonText = "Stop Listening"
+              }else if (buttonText === "Stop Listening"){
+                buttonText = 'Start Listening'
+              }
+              if (counting === false) {
+                this.startCounting();
+                counting = !counting;
+                
+              }
+            }}>{buttonText}</button>
 
         </div>
       </div>
-
     )
   }
 }
@@ -296,52 +369,85 @@ export default Speech
 //-------------------------CSS------------------------------------
 
 const styles = {
+  row:{
+    textAlign:"center",
+    padding: "10px",
+    margin: "auto",
+    flexDirection: 'row',
+    verticalAlign: 'middle'
+
+  },
   logo: {
-    margin: '10px',
-    borderRadius: '25px',
-    border: '10px solid #73AD21',
+    verticalAlign: 'top',
+    float: 'left',
+    textShadow: '3px 3px 0.3em #f70f0f',
+    margin: 'auto',
+    // borderRadius: '25px',
+    // border: '10px solid DarkSlateBlue',
     padding: '20px',
     width: '200px',
     height: '150px',
     alignItems: 'center',
     textAlign: 'center',
+  },  
+  timer: {
+    verticalAlign: 'top',
+    float: 'right',
+    // verticalAlign: 'top',
+    // float: 'left',
+    fontSize: '35px',
+    margin: '20px',
+    borderRadius: '25px',
+    border: '2px solid grey',
+    padding: '20px',
+    width: '200px',
+    height: '100px',
+    alignItems: 'center',
+    textAlign: 'center',
   },
-
-  // background: {
-  //   color: 'blue',
-  //   backgroundImage: `require(${Background})`,
-  //   display: 'flex',
-  //   backgroundSize: 'cover',
-  //   flexDirection: 'column',
-  //   alignItems: 'center',
-  //   textAlign: 'center'
-  // },
   container: {
-    color: 'blue',
+    color: 'light blue',
     display: 'flex',
     backgroundSize: 'cover',
     flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center'
   },
-  button: {
-    width: '60px',
-    height: '60px',
-    background: 'lightblue',
-    borderRadius: '50%',
-    margin: '1em 0 1em 0'
+  button : {
+    boxShadow: '0 0 8px grey, 0 0 5px black',
+    fontFamily: 'Clashfont',
+    color: 'fuchsia',
+    verticalAlign: 'top',
+    float: 'right',
+    borderRadius: '4px',
+    background: 'rgb(131,58,180)',
+    background: 'linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 0%, rgba(252,176,69,1) 100%)',
+    border: 'none',
+    color: 'white',
+    textAlign: 'center',
+    fontSize: '28px',
+    padding: '20px',
+    width: '250px',
+    transition: 'all 0.5s',
+    cursor: 'pointer',
+    margin: '10px',
   },
   interim: {
     color: 'gray',
+    opacity: '0.8',
+    fontFamily: 'Clashfont',
+    backgroundColor: 'grey',
     border: '#ccc 1px solid',
     padding: '1em',
     margin: '1em',
-    width: '300px'
+    width: '200px',
+    marginTop: '0',
+
   },
   final: {
     fontSize: '20px',
     color: 'black',
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
     opacity: '0.9',
     border: '#ccc 1px solid',
     padding: '1em',
@@ -350,4 +456,4 @@ const styles = {
   }
 }
 
-const { logo, container, button, interim, final } = styles
+const { row, logo, timer, container, button, interim, final } = styles
