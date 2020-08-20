@@ -1,6 +1,10 @@
 # Clash Counter
 Clash Royale companion web application deceloped using React.  Uses voice recognition from user to track opponent's elixir and card cycle based on saying troop names out loud.  Uses JS SpeechRecognition web api and Clash Royale api.
 
+## Usage:
+Currently the api has only been tested on Chrome.  Be sure to enable microphone access in browser settings.
+
+
 ## Completed:
     • Called Clash Royale API to download all cards
     • Preprocessed all card data to lower case with elixir cost field added
@@ -16,5 +20,5 @@ Clash Royale companion web application deceloped using React.  Uses voice recogn
     • Store user data - player ID and improve recognition based on pronounciation aliases
     • Node JS
     • Host on AWS
-    
+
 
