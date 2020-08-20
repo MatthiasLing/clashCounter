@@ -8,11 +8,11 @@ Clash Royale companion web application deceloped using React.  Uses voice recogn
     • Fix cycle detection algorithm
     • Create UI with cards in hand displayed
     • Elixir bar calculation
-    • Manual override and adding elixir 
-
-## To Do:
+    • Manual override and adding elixir
     • Elixir bar visualization
     • Work out edge cases - mirror
+
+## To Do:
     • Store user data - player ID and improve recognition based on pronounciation aliases
     • Node JS
     • Host on AWS
