@@ -27,7 +27,7 @@ export function isAlias(name, reference){
 export function isCommand(manualAddCheck, currentElixir){
     var amount;
     var newValue;
-    if (manualAddCheck.length != 2)
+    if (manualAddCheck.length !== 2)
         return -1;
     
     amount = manualAddCheck[1];

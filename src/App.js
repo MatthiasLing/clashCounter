@@ -6,21 +6,19 @@ import './App.css';
 import Speech from './Homescreen'
 
 class App extends Component {
-  state = { }
-  constructor(props){
+  state = {}
+  constructor(props) {
     super(props);
-    this.state={
-      homePage:null,
+    this.state = {
+      homePage: null,
 
     }
   }
-  componentWillMount(){
-    // var pages =[];
-    //     pages.push(<Speech parentContext={this}/>);
+  componentWillMount() {
 
     this.setState({
-                  homePage:<Speech parentContext={this}/>
-                    })
+      homePage: <Speech parentContext={this} />
+    })
   }
   render() {
     return (
