@@ -31,9 +31,10 @@ var buttonText = "Start";
 class Speech extends Component {
 
   //TODO: fix repetition of cards that were just said 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
+      aliases: [],
       seen: true,
       percentage: 0,
       isLoading: false,
@@ -48,10 +49,18 @@ class Speech extends Component {
     this.toggleListen = this.toggleListen.bind(this)
     this.handleListen = this.handleListen.bind(this)
     this.toggleSeen = this.toggleSeen.bind(this)
+    this.addToAliases = this.addToAliases.bind(this)
 
     //TODO: ensure this is right
     allCards = this.state.cardArray;
 
+  }
+
+  addToAliases (card){
+    console.log(card)
+    this.state.aliases.push(card)
+    // this.setState({ aliases: this.state.aliases.push(card) });
+    console.log(this.state.aliases);
   }
 
   toggleSeen() {
@@ -263,7 +272,10 @@ class Speech extends Component {
     // const cardArray = this.state.cardArray;
     if (isLoading) return (<div>Loading ...</div>)
     if (this.state.seen === false) {
-      return <Alias action={this.toggleSeen} />
+      return <Alias 
+      toggleSeen = {() => this.toggleSeen}
+      addToAliases = {this.addToAliases}
+        />
     }
 
     return (
