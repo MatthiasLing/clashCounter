@@ -15,10 +15,11 @@ Currently the api has only been tested on Chrome.  Be sure to enable microphone 
     • Manual override and adding elixir
     • Elixir bar visualization
     • Work out edge cases - mirror
+    • Store user data - Lists of aliases per key value stored successfully in dynamoDB and called as well
 
 ## To Do:
-    • Store user data - player ID and improve recognition based on pronounciation aliases
-    • Node JS
+    
+    • UI improvements
     • Host on AWS
 
 
