@@ -62,16 +62,11 @@ class Speech extends Component {
 
   addToAliases (cards){
     this.setState ({ aliases: cards });
-    console.log(this.state.aliases)
-    //TODO: not sure if a += should go here
-    // this.setState ({ [this.state.aliases]: this.state.aliases + cards });
-
   }
 
 
   //string and one card
   isPlayable(card) {
-    console.log(inCycle.indexOf(card));
     //can't play if too expensive
     if (card.elixir > this.state.elixir) {
       return false
@@ -118,14 +113,9 @@ class Speech extends Component {
     document.getElementById("justPlayed").src = justPlayed;
   }
 
-
-  //TODO: this is suspect
   checkAliases(str){
-    
       for (const [key, value] of Object.entries(this.state.aliases)) {
-        console.log(key, value);
         for (var i=0; i< value.length; i++){
-          console.log(value);
           if (value[i]===str)
             return key;
         }
@@ -148,7 +138,6 @@ class Speech extends Component {
     //check the aliases first 
     var aliasCheck = this.checkAliases(query);
     if (this.checkAliases(str) != null){
-      console.log("Alias found!!!")
       query = aliasCheck;
     }
 
@@ -161,7 +150,6 @@ class Speech extends Component {
         if (this.isPlayable(card)){
           if (deck.length < 8) {
             if (!deck.includes(card)) {
-              console.log("adding " + card.name[0] + " to deck");
               deck.push(card);
             }
           }
@@ -239,9 +227,6 @@ class Speech extends Component {
   }
 
   handleListen() {
-
-    console.log(this.state.aliases);
-
     if (this.state.listening) {
       recognition.start()
       recognition.onend = () => {
@@ -280,9 +265,7 @@ class Speech extends Component {
       if (stopCmd[0] === 'stop' && stopCmd[1] === 'listening') {
         recognition.stop()
         recognition.onend = () => {
-          //   console.log('Stopped listening per command')
           const finalText = transcriptArr.slice(0, -3).join(' ')
-          //The Shit I added
           document.getElementById('interim').innerHTML = finalText
         }
       }
@@ -371,6 +354,9 @@ class Speech extends Component {
               }
             }}>{buttonText}</button>
           <button onClick={() => {
+            if(this.state.listening){
+              this.toggleListen();            
+            }
             this.toggleSeen();
           }}
             style={{

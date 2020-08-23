@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import blank from './../resources/blankcard.png';
+import './aliasStyle.css'
 
 //------------------------SPEECH RECOGNITION-----------------------------
 
@@ -21,14 +22,13 @@ const AWS = require('aws-sdk');
 let awsConfig = {
   "region": "us-east-1",
   "endpoint": "http://dynamodb.us-east-1.amazonaws.com/",
-  "accessKeyId": "<key value>",
-  "secretAccessKey": '<key value>',
+  "accessKeyId":,
+  "secretAccessKey": ,
 }
 AWS.config.update(awsConfig);
 let client = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
 
 class Alias extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
@@ -46,71 +46,75 @@ class Alias extends Component {
     this.setState({ url: blank, playerID: {}, cards: [], cardArray: require('./../cards.json').items });
   }
 
-   async fetchOnebyKey (id) {
+  componentWillUnmount(){
+    this.setState({
+      listening: false
+    }, this.handleListen)
+    recognition.stop()
+    recognition.onend = () => {
+    }
+  }
+
+  async getBasic(){
+    aliasList = await this.fetchOnebyKey(id);
+    this.props.addToAliases(aliasList);
+  }
+  fetchOnebyKey (id) {
+
     var params = {
       TableName: "userTable",
       Key: {
         "id": id
       }
     };
-    client.get(params, function (err, data) {
-      if (err) {
-        // callback(err,null);
-        id = "ERROR"
-        document.getElementById("fname").defaultValue = id;
-        document.getElementById("fname").style.color = "red";
-      } else {
-        // callback(null, data.Items);
-        var output = JSON.stringify(data, null, 2);
-        var output2 = JSON.parse(output)
-  
-        if (output2.Item == null){
-        document.getElementById("fname").value = "No user found";
-        document.getElementById("fname").style.color = "red";
-        }else{
-        document.getElementById("fname").defaultValue = id;
-        document.getElementById("fname").style.color = "green";
-        aliasList = JSON.parse(output2.Item.aliases);
+
+    return new Promise(function(resolve, reject) { 
+      client.get(params, function (err, data) {
+        if (err) {
+          id = "ERROR"
+          document.getElementById("fname").defaultValue = id;
+          document.getElementById("fname").style.color = "red";
+        } else {
+          var output = JSON.stringify(data, null, 2);
+          var output2 = JSON.parse(output)
+    
+          if (output2.Item == null){
+          document.getElementById("fname").value = "No user found";
+          document.getElementById("fname").style.color = "red";
+          }else{
+          document.getElementById("fname").defaultValue = id;
+          document.getElementById("fname").style.color = "green";
+          resolve(JSON.parse(output2.Item.aliases));
+          }
         }
-      }
-    })
-    ;  
+      })
+      ;  
+    });
   };
-  
+
+  async saveBasic(){
+    var worked = await this.save(id, aliasList)
+  }
 
   save = function (id, lst) {
-    console.log(lst)
-
     var params = {
       TableName: "userTable",
-      // Key: {
-      //     "id" : "test123abc"
-      // },
       Item: {
         id: id,
         aliases:
           JSON.stringify(lst)
       }
     };
-
-    client.put(params, function (err, data) {
-      if (err) {
-        // callback(err,null);
-        console.log(JSON.stringify(err, null, 2));
-
-      } else {
-        // callback(null, data.Items);
-        console.log(JSON.stringify(data, null, 2));
-      }
+    return new Promise(function(resolve, reject) {
+      client.put(params, function (err, data) {
+        if (err) {
+          reject(false);
+        } else {
+          resolve(true);
+        }
+      });
     });
   }
-
-  // async changeState(){
-  //   const response = await fetch('https://e9mvbloutj.execute-api.us-east-1.amazonaws.com/dev');
-  //   const body = await response.json();
-  //   console.log(body);
-  //   this.setState({cards: body, isLoading: false});
-  // }
 
   toggleListen() {
     this.setState({
@@ -142,16 +146,14 @@ class Alias extends Component {
           finalTranscript = transcript + ' ';
         }
       }
-      // console.log(finalTranscript);
       document.getElementById('interim').innerHTML = finalTranscript
 
-      //finaltranscript is the one we want 
       if (current >= 0 && current < 99) {
 
         var trimmed = finalTranscript.toLowerCase().trim();
         var currName = this.state.cardArray[current].name[0];
 
-        if (trimmed != "") {
+        if (trimmed !== "") {
           if (aliasList[currName] == null) {
             aliasList[currName] = [trimmed];
           } else if (aliasList[currName].indexOf(trimmed) < 0) {
@@ -163,15 +165,11 @@ class Alias extends Component {
       }
 
       //-------------------------COMMANDS------------------------------------
-
       const transcriptArr = finalTranscript.split(' ')
       const stopCmd = transcriptArr.slice(-3, -1).join(' ');
       if (stopCmd[0] === 'stop' && stopCmd[1] === 'listening') {
         recognition.stop()
         recognition.onend = () => {
-          const finalText = transcriptArr.slice(0, -3).join(' ')
-
-          //  document.getElementById('interim').innerHTML = finalText
         }
       }
     }
@@ -216,26 +214,18 @@ class Alias extends Component {
             document.getElementById("fname").style.color = "black";
             id = event.target.value;
             }} >
-
           </input>
           <button type="button" id = "saveButton" style={button} onClick={
             ()=>{
-              if (state == 0){
-                console.log("get")
-                this.fetchOnebyKey(id)
-                console.log(aliasList);
+              if (state === 0){
+                // this.fetchOnebyKey(id)
+                this.getBasic();
               }else{
-                console.log(1)
-                this.save(id, aliasList);
+                this.saveBasic();
               }
-              this.props.addToAliases(aliasList);
-              
+              this.props.addToAliases(aliasList); 
             }
-            
           } 
-          
-            
-             
           >Get Aliases</button>
         </div>
 
@@ -249,28 +239,22 @@ class Alias extends Component {
             marginTop: "20px",
             marginBottom: "20px",
             verticalAlign: "baseline"
-            // textAlign: "center"
-
           }}>
 
           </div>
           {/* The card that comes up each time */}
           <div class="row" display="flex">
-            <a class="back" onClick={() => {
+            <div><a class="back" onClick={() => {
               this.incrementView(-1);
-            }} >‹</a>
-
-            <img id="blank" src={this.state.url} alt="" width="173" height="206"
-            //  style = {{marginBottom : "20px"}} 
-            />
-
-            <a class="next" onClick={() => {
-              this.incrementView(1);
-            }}>›</a>
+            }} >{'<'}</a></div>
+            <img id="blank" src={this.state.url} alt="" width="173" height="206"/>
+            <a class="next" 
+              onClick={() => {
+                this.incrementView(1);
+            }}>{'>'}</a>
           </div>
 
           <div id='interim' style={interim}></div>
-
           <button id='microphone-btn'
             style={button} onClick={() => {
               this.toggleListen();
@@ -283,13 +267,12 @@ class Alias extends Component {
 
           <button type="buttonBack" id = "saveButton" style={{
               color: "grey", backgroundColor: "gold", fontFamily: 'Clashfont', marginTop: "10px"
-            }} onClick={this.props.toggleSeen}
-             
-
+            }} onClick={
+              () => {
+                this.props.toggleSeen();
+              }}
           >Back to Main Page</button>
-
         </div>
-
       </div>
     )
   }
@@ -315,13 +298,6 @@ const styles = {
     marginTop: '10',
     readOnly: 'false'
   },
-  row: {
-    textAlign: "center",
-    padding: "10px",
-    margin: "auto",
-    flexDirection: 'row',
-    verticalAlign: 'middle'
-  },
   logo: {
     verticalAlign: 'top',
     float: 'left',
@@ -333,21 +309,6 @@ const styles = {
     alignItems: 'center',
     textAlign: 'center',
   },
-  timer: {
-    verticalAlign: 'top',
-    float: 'right',
-    // verticalAlign: 'top',
-    // float: 'left',
-    fontSize: '35px',
-    margin: '20px',
-    borderRadius: '25px',
-    border: '2px solid grey',
-    padding: '20px',
-    width: '200px',
-    height: '100px',
-    alignItems: 'center',
-    textAlign: 'center',
-  },
   container: {
     color: 'light blue',
     display: 'flex',
@@ -355,7 +316,6 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center',
-    // marginLeft: "auto",
     marginRight: "auto"
   },
   button: {
@@ -386,4 +346,4 @@ const styles = {
   },
 }
 
-const { topRight, playerID , row, logo, timer, container, button, interim } = styles
+const { topRight, playerID , logo, container, button, interim } = styles

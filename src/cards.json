@@ -1,11 +1,115 @@
 {
     "items": [
       {
-        "name": ["knight", "night"],
+        "name": ["knight"],
         "id": 26000000,
         "elixir" : 3,
         "iconUrls": {
           "medium": "https://api-assets.clashroyale.com/cards/300/jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.png"
+        }
+      },
+      {
+        "name": ["witch"],
+        "id": 26000007,
+        "elixir" : 5,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/cfwk1vzehVyHC-uloEIH6NOI0hOdofCutR5PyhIgO6w.png"
+        }
+      },
+      {
+        "name": ["freeze"],
+        "id": 28000005,
+        "elixir" : 4,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/I1M20_Zs_p_BS1NaNIVQjuMJkYI_1-ePtwYZahn0JXQ.png"
+        }
+      },
+      {
+        "name": ["miner"],
+        "id": 26000032,
+        "elixir" : 3,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/Y4yWvdwBCg2FpAZgs8T09Gy34WOwpLZW-ttL52Ae8NE.png"
+        }
+      },
+      {
+        "name": ["x-bow"],
+        "id": 27000008,
+        "elixir" : 6,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/zVQ9Hme1hlj9Dc6e1ORl9xWwglcSrP7ejow5mAhLUJc.png"
+        }
+      },
+      {
+        "name": ["golem"],
+        "id": 26000009,
+        "elixir" : 8,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/npdmCnET7jmVjJvjJQkFnNSNnDxYHDBigbvIAloFMds.png"
+        }
+      },
+      {
+        "name": ["bats"],
+        "id": 26000049,
+        "elixir" : 2,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/EnIcvO21hxiNpoI-zO6MDjLmzwPbq8Z4JPo2OKoVUjU.png"
+        }
+      },
+      {
+        "name": ["zappies"],
+        "id": 26000052,
+        "elixir" : 4,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/QZfHRpLRmutZbCr5fpLnTpIp89vLI6NrAwzGZ8tHEc4.png"
+        }
+      },
+      {
+        "name": ["heal spirit"],
+        "id": 28000016,
+        "elixir" : 1,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/GITl06sa2nGRLPvboyXbGEv5E3I-wAwn1Eqa5esggbc.png"
+        }
+      },
+      {
+        "name": ["cannon"],
+        "id": 27000000,
+        "elixir" : 3,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/nZK1y-beLxO5vnlyUhK6-2zH2NzXJwqykcosqQ1cmZ8.png"
+        }
+      },      
+      {
+        "name": ["mega knight"],
+        "id": 26000055,
+        "elixir" : 7,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/O2NycChSNhn_UK9nqBXUhhC_lILkiANzPuJjtjoz0CE.png"
+        }
+      },
+      {
+        "name": ["arrows"],
+        "id": 28000001,
+        "elixir" : 3,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/Flsoci-Y6y8ZFVi5uRFTmgkPnCmMyMVrU7YmmuPvSBo.png"
+        }
+      },
+      {
+        "name": ["zap"],
+        "id": 28000008,
+        "elixir" : 2,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/7dxh2-yCBy1x44GrBaL29vjqnEEeJXHEAlsi5g6D1eY.png"
+        }
+      },
+      {
+        "name": ["the log"],
+        "id": 28000011,
+        "elixir" : 2,
+        "iconUrls": {
+          "medium": "https://api-assets.clashroyale.com/cards/300/_iDwuDLexHPFZ_x4_a0eP-rxCS6vwWgTs6DLauwwoaY.png"
         }
       },
       {
@@ -57,27 +161,11 @@
         }
       },
       {
-        "name": ["witch", "which"],
-        "id": 26000007,
-        "elixir" : 5,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/cfwk1vzehVyHC-uloEIH6NOI0hOdofCutR5PyhIgO6w.png"
-        }
-      },
-      {
         "name": ["barbarians"],
         "id": 26000008,
         "elixir" : 5,
         "iconUrls": {
           "medium": "https://api-assets.clashroyale.com/cards/300/TvJsuu2S4yhyk1jVYUAQwdKOnW4U77KuWWOTPOWnwfI.png"
-        }
-      },
-      {
-        "name": ["golem","gollum"],
-        "id": 26000009,
-        "elixir" : 8,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/npdmCnET7jmVjJvjJQkFnNSNnDxYHDBigbvIAloFMds.png"
         }
       },
       {
@@ -257,14 +345,6 @@
         }
       },
       {
-        "name": ["miner","minor"],
-        "id": 26000032,
-        "elixir" : 3,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/Y4yWvdwBCg2FpAZgs8T09Gy34WOwpLZW-ttL52Ae8NE.png"
-        }
-      },
-      {
         "name": ["sparky"],
         "id": 26000033,
         "elixir" : 6,
@@ -393,14 +473,6 @@
         }
       },
       {
-        "name": ["bats", "that's"],
-        "id": 26000049,
-        "elixir" : 2,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/EnIcvO21hxiNpoI-zO6MDjLmzwPbq8Z4JPo2OKoVUjU.png"
-        }
-      },
-      {
         "name": ["royal ghost"],
         "id": 26000050,
         "elixir" : 3,
@@ -417,14 +489,6 @@
         }
       },
       {
-        "name": ["zappies"],
-        "id": 26000052,
-        "elixir" : 4,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/QZfHRpLRmutZbCr5fpLnTpIp89vLI6NrAwzGZ8tHEc4.png"
-        }
-      },
-      {
         "name": ["rascals"],
         "id": 26000053,
         "elixir" : 5,
@@ -438,14 +502,6 @@
         "elixir" : 5,
         "iconUrls": {
           "medium": "https://api-assets.clashroyale.com/cards/300/aqwxRz8HXzqlMCO4WMXNA1txynjXTsLinknqsgZLbok.png"
-        }
-      },
-      {
-        "name": ["mega knight", "megan night"],
-        "id": 26000055,
-        "elixir" : 7,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/O2NycChSNhn_UK9nqBXUhhC_lILkiANzPuJjtjoz0CE.png"
         }
       },
       {
@@ -545,14 +601,6 @@
         }
       },
       {
-        "name": ["cannon", "canon"],
-        "id": 27000000,
-        "elixir" : 3,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/nZK1y-beLxO5vnlyUhK6-2zH2NzXJwqykcosqQ1cmZ8.png"
-        }
-      },
-      {
         "name": ["goblin hut"],
         "id": 27000001,
         "elixir" : 5,
@@ -609,14 +657,6 @@
         }
       },
       {
-        "name": ["x-bow","expo"],
-        "id": 27000008,
-        "elixir" : 6,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/zVQ9Hme1hlj9Dc6e1ORl9xWwglcSrP7ejow5mAhLUJc.png"
-        }
-      },
-      {
         "name": ["tombstone"],
         "id": 27000009,
         "elixir" : 3,
@@ -649,14 +689,6 @@
         }
       },
       {
-        "name": ["arrows"],
-        "id": 28000001,
-        "elixir" : 3,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/Flsoci-Y6y8ZFVi5uRFTmgkPnCmMyMVrU7YmmuPvSBo.png"
-        }
-      },
-      {
         "name": ["rage"],
         "id": 28000002,
         "elixir" : 2,
@@ -681,14 +713,6 @@
         }
       },
       {
-        "name": ["freeze", "fries"],
-        "id": 28000005,
-        "elixir" : 4,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/I1M20_Zs_p_BS1NaNIVQjuMJkYI_1-ePtwYZahn0JXQ.png"
-        }
-      },
-      {
         "name": ["mirror"],
         "id": 28000006,
         "elixir" : 1,
@@ -705,14 +729,6 @@
         }
       },
       {
-        "name": ["zap"],
-        "id": 28000008,
-        "elixir" : 2,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/7dxh2-yCBy1x44GrBaL29vjqnEEeJXHEAlsi5g6D1eY.png"
-        }
-      },
-      {
         "name": ["poison"],
         "id": 28000009,
         "elixir" : 4,
@@ -726,14 +742,6 @@
         "elixir" : 5,
         "iconUrls": {
           "medium": "https://api-assets.clashroyale.com/cards/300/Icp8BIyyfBTj1ncCJS7mb82SY7TPV-MAE-J2L2R48DI.png"
-        }
-      },
-      {
-        "name": ["the log", "log"],
-        "id": 28000011,
-        "elixir" : 2,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/_iDwuDLexHPFZ_x4_a0eP-rxCS6vwWgTs6DLauwwoaY.png"
         }
       },
       {
@@ -766,14 +774,6 @@
         "elixir" : 2,
         "iconUrls": {
           "medium": "https://api-assets.clashroyale.com/cards/300/Gb0G1yNy0i5cIGUHin8uoFWxqntNtRPhY_jeMXg7HnA.png"
-        }
-      },
-      {
-        "name": ["heal spirit"],
-        "id": 28000016,
-        "elixir" : 1,
-        "iconUrls": {
-          "medium": "https://api-assets.clashroyale.com/cards/300/GITl06sa2nGRLPvboyXbGEv5E3I-wAwn1Eqa5esggbc.png"
         }
       },
       {
