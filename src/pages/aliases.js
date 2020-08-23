@@ -1,7 +1,5 @@
 import React, { Component } from "react"
 import blank from './../resources/blankcard.png';
-import { EditorBorderTop } from "material-ui/svg-icons";
-// import { isAlias, isCommand } from './engine';
 
 //------------------------SPEECH RECOGNITION-----------------------------
 
@@ -18,64 +16,18 @@ var id = '';
 var buttonText = "Start";
 var current = -1;
 var aliasList = {};
-var allCards = require('./../cards.json')
-
+var state = 0;
 const AWS = require('aws-sdk');
 let awsConfig = {
-    "region": "us-east-1",
-    "endpoint": "http://dynamodb.us-east-1.amazonaws.com/",
-    "accessKeyId": "<Your key here>",
-    "secretAccessKey": '<Your key here>',
+  "region": "us-east-1",
+  "endpoint": "http://dynamodb.us-east-1.amazonaws.com/",
+  "accessKeyId": "<key value>",
+  "secretAccessKey": '<key value>',
 }
 AWS.config.update(awsConfig);
-let client = new AWS.DynamoDB.DocumentClient({region : 'us-east-1'});
-
+let client = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
 
 class Alias extends Component {
-
-  fetchOnebyKey = function(id){
-    var params = {
-        TableName: "userTable",
-        Key: {
-            "id" : id.toString()
-        }
-    };
-    client.get(params, function(err,data){
-        if (err){
-            // callback(err,null);
-            console.log("FAIL")
-        }else{
-            // callback(null, data.Items);
-            console.log(JSON.stringify(data,null,2));
-        }
-    });
-}
-
-save = function(id, values){
-
-  var params = {
-      TableName: "userTable",
-      // Key: {
-      //     "id" : "test123abc"
-      // },
-      Item: {
-        id : id,
-        aliases:
-        JSON.stringify(aliasList)}
-  };
-
-  client.put(params, function(err,data){
-      if (err){
-          // callback(err,null);
-          console.log("FAIL")
-          console.log(JSON.stringify(err,null,2));
-
-      }else{
-          // callback(null, data.Items);
-          console.log(JSON.stringify(data,null,2));
-      }
-  });
-}
 
   constructor(props) {
     super(props)
@@ -83,15 +35,74 @@ save = function(id, values){
       url: "./../resources/blankcard.png",
       cardArray: require('./../cards.json'),
       listening: false,
-      cards : []
+      cards: [],
+      playerAliases: {}
     }
     this.toggleListen = this.toggleListen.bind(this)
     this.handleListen = this.handleListen.bind(this)
-
   }
-  async componentDidMount(){
+  async componentDidMount() {
     id = '';
-    this.setState({url: blank, cards: [], cardArray: require('./../cards.json').items});
+    this.setState({ url: blank, playerID: {}, cards: [], cardArray: require('./../cards.json').items });
+  }
+
+   async fetchOnebyKey (id) {
+    var params = {
+      TableName: "userTable",
+      Key: {
+        "id": id
+      }
+    };
+    client.get(params, function (err, data) {
+      if (err) {
+        // callback(err,null);
+        id = "ERROR"
+        document.getElementById("fname").defaultValue = id;
+        document.getElementById("fname").style.color = "red";
+      } else {
+        // callback(null, data.Items);
+        var output = JSON.stringify(data, null, 2);
+        var output2 = JSON.parse(output)
+  
+        if (output2.Item == null){
+        document.getElementById("fname").value = "No user found";
+        document.getElementById("fname").style.color = "red";
+        }else{
+        document.getElementById("fname").defaultValue = id;
+        document.getElementById("fname").style.color = "green";
+        aliasList = JSON.parse(output2.Item.aliases);
+        }
+      }
+    })
+    ;  
+  };
+  
+
+  save = function (id, lst) {
+    console.log(lst)
+
+    var params = {
+      TableName: "userTable",
+      // Key: {
+      //     "id" : "test123abc"
+      // },
+      Item: {
+        id: id,
+        aliases:
+          JSON.stringify(lst)
+      }
+    };
+
+    client.put(params, function (err, data) {
+      if (err) {
+        // callback(err,null);
+        console.log(JSON.stringify(err, null, 2));
+
+      } else {
+        // callback(null, data.Items);
+        console.log(JSON.stringify(data, null, 2));
+      }
+    });
   }
 
   // async changeState(){
@@ -131,39 +142,28 @@ save = function(id, values){
           finalTranscript = transcript + ' ';
         }
       }
-       console.log(finalTranscript);
+      // console.log(finalTranscript);
       document.getElementById('interim').innerHTML = finalTranscript
 
       //finaltranscript is the one we want 
-      if (current >=0 && current < 99){
+      if (current >= 0 && current < 99) {
 
         var trimmed = finalTranscript.toLowerCase().trim();
         var currName = this.state.cardArray[current].name[0];
 
-        if(trimmed != ""){
-          if (aliasList[currName] == null){
+        if (trimmed != "") {
+          if (aliasList[currName] == null) {
             aliasList[currName] = [trimmed];
-          }else if (aliasList[currName].indexOf(trimmed) < 0){
+          } else if (aliasList[currName].indexOf(trimmed) < 0) {
             aliasList[currName].push(trimmed)
           }
-
-          
-          // if(this.state.cards[currName] == null){
-          //   this.state.cards[currName] = [];
-          // }
-        
-          // if (this.state.cards[currName].indexOf(trimmed)<0){
-          //   this.state.cards[currName].push(trimmed)
-          // }
-          console.log(aliasList)
+          state++;
+          document.getElementById("saveButton").innerHTML = "Save Aliases"
         }
-        
-        // this.state.cards[allCards.items[current].name].push(finalTranscript);
-        // console.log(this.state.cards[current]);
       }
 
       //-------------------------COMMANDS------------------------------------
- 
+
       const transcriptArr = finalTranscript.split(' ')
       const stopCmd = transcriptArr.slice(-3, -1).join(' ');
       if (stopCmd[0] === 'stop' && stopCmd[1] === 'listening') {
@@ -181,48 +181,63 @@ save = function(id, values){
     }
   }
 
-  incrementView(amt){
-    id = "LingDynasty";
+  incrementView(amt) {
     current += amt;
-      if (current === 99){
-        current = 0;
-      }else if (current < 0){
-        current = 98;
-      }
-      this.setState({url: this.state.cardArray[current].iconUrls.medium});
-      console.log(current)
+    if (current === 99) {
+      current = 0;
+    } else if (current < 0) {
+      current = 98;
     }
-  
+    this.setState({ url: this.state.cardArray[current].iconUrls.medium });
+  }
 
   render() {
     const isLoading = this.state.isLoading;
     // const cardArray = this.state.cardArray;
     if (isLoading) return (<div>Loading ...</div>)
     return (
-        
+
       <div style={{
         backgroundImage: 'url(' + require('./../resources/background2.jpg') + ')',
         backgroundSize: 'cover',
         height: '100vh',
+        position: 'absolute',
         width: '100%',
+        alignItems: 'center',
         opacity: '1'
       }}>
         <div style={logo}>
           <div style={{ color: '#b7c3c7', fontFamily: 'Clashfont', fontSize: '40px' }}>Set</div>
           <div style={{ color: 'gold', fontFamily: 'Clashfont', fontSize: '40px' }}>Aliases</div>
         </div>
-        
-        <button type="button" style={button} onClick={ async() => {
-          if (true)
-            // await this.changeState();}
-            console.log(id);
-            this.save("LingDynasty", this.state.cards);
-            this.fetchOnebyKey(id);
-        }
-          // this.props.toggleSeen()
-          }>Save</button>
+        <div class="column" style={topRight}>
+          <input type="text" id="fname" class="form" style={playerID} 
+            defaultValue={id} onChange ={(event)=>{
+            document.getElementById("fname").style.color = "black";
+            id = event.target.value;
+            }} >
 
-
+          </input>
+          <button type="button" id = "saveButton" style={button} onClick={
+            ()=>{
+              if (state == 0){
+                console.log("get")
+                this.fetchOnebyKey(id)
+                console.log(aliasList);
+              }else{
+                console.log(1)
+                this.save(id, aliasList);
+              }
+              this.props.addToAliases(aliasList);
+              
+            }
+            
+          } 
+          
+            
+             
+          >Get Aliases</button>
+        </div>
 
         <div style={container}>
           <div style={{
@@ -237,29 +252,27 @@ save = function(id, values){
             // textAlign: "center"
 
           }}>
-             
+
           </div>
- {/* The card that comes up each time */}
- <div class="row" display="flex">
- <button type ="button" onClick= {()=>{
-   this.incrementView(-1);
+          {/* The card that comes up each time */}
+          <div class="row" display="flex">
+            <a class="back" onClick={() => {
+              this.incrementView(-1);
+            }} >‹</a>
 
- }}>{"<"}</button>
+            <img id="blank" src={this.state.url} alt="" width="173" height="206"
+            //  style = {{marginBottom : "20px"}} 
+            />
 
- <img id="blank" src={this.state.url} alt="" width="173" height="206" style = {{marginBottom : "20px"}}  />
- <button type ="button" onClick={() => {
-   this.incrementView(1);
-   //console.log(this.state.cards);
- }} >{">"}</button>
-  </div>
- 
+            <a class="next" onClick={() => {
+              this.incrementView(1);
+            }}>›</a>
+          </div>
 
-            <div id='interim' style={interim}>
-            </div>
+          <div id='interim' style={interim}></div>
 
           <button id='microphone-btn'
             style={button} onClick={() => {
-              // this.props.addToAliases("{esfesfsefes");
               this.toggleListen();
               if (buttonText === "Start" || buttonText === 'Start Listening') {
                 buttonText = "Stop Listening"
@@ -267,6 +280,13 @@ save = function(id, values){
                 buttonText = 'Start Listening'
               }
             }}>{buttonText}</button>
+
+          <button type="buttonBack" id = "saveButton" style={{
+              color: "grey", backgroundColor: "gold", fontFamily: 'Clashfont', marginTop: "10px"
+            }} onClick={this.props.toggleSeen}
+             
+
+          >Back to Main Page</button>
 
         </div>
 
@@ -280,33 +300,20 @@ export default Alias
 //-------------------------CSS------------------------------------
 
 const styles = {
-  a : {
-    textDecoration: "none",
-    display: "inline-block",
-    padding: "8px 16px",
-  },
-  
-  // a:hover :{
-  //   backgroundColor: "#ddd",
-  //   color: "black"
-  // },
-  
-  previous :{
-    backgroundColor: "#f1f1f1",
-    color: "black"
-  },
-  
-  next : {
-    backgroundColor: "#4CAF50",
-    color: "white"
-  },
-  
-  round : {
-    borderRadius: "50%"
-  },
-  form:{
+  topRight: {
     verticalAlign: 'top',
     float: 'right',
+  },
+  playerID: {
+    color: 'black',
+    opacity: '0.8',
+    fontFamily: 'Clashfont',
+    border: '#ccc 2px solid',
+    padding: '1em',
+    margin: '1em',
+    width: '200px',
+    marginTop: '10',
+    readOnly: 'false'
   },
   row: {
     textAlign: "center",
@@ -348,14 +355,12 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center',
-    marginLeft: "auto",
+    // marginLeft: "auto",
     marginRight: "auto"
   },
   button: {
     boxShadow: '0 0 8px grey, 0 0 5px black',
     fontFamily: 'Clashfont',
-    verticalAlign: 'top',
-    float: 'right',
     borderRadius: '4px',
     background: 'linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 0%, rgba(252,176,69,1) 100%)',
     border: 'none',
@@ -377,8 +382,8 @@ const styles = {
     padding: '1em',
     margin: '1em',
     width: '200px',
-    marginTop: '0',
+    marginTop: '10',
   },
 }
 
-const { form, row, logo, timer, container, button, interim } = styles
+const { topRight, playerID , row, logo, timer, container, button, interim } = styles

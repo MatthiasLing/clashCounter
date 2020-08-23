@@ -1,0 +1,37 @@
+a {
+    text-decoration: none;
+    display: inline-block;
+    padding: 20px;
+    font-size: 35px;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    margin: 40px;
+ }
+ .back:hover {
+    background-color: gold;
+    color: white;
+    opacity: 0.7;
+    text-decoration: none;
+ }
+ .next:hover {
+    background-color: orangered;
+    color: white;
+    opacity: 0.7;
+    text-decoration: none;
+
+ }
+ .back {
+    border-radius: 50%;
+    background-color:orangered;
+    color: white;
+    opacity: 0.9;
+
+ }
+ .next {
+    border-radius: 50%;
+    background-color: gold;
+    color: white;
+    opacity: 0.9;
+
+ }

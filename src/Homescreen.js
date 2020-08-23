@@ -27,14 +27,14 @@ var justPlayed = '';
 var allCards;
 var counting = false;
 var buttonText = "Start";
-
 class Speech extends Component {
 
   //TODO: fix repetition of cards that were just said 
   constructor(props) {
     super(props)
     this.state = {
-      aliases: [],
+      playerID: "",
+      //TODO: change back
       seen: true,
       percentage: 0,
       isLoading: false,
@@ -42,7 +42,8 @@ class Speech extends Component {
       elixir: 5,
       elapsedTime: null,
       timeID: null,
-      listening: false
+      listening: false,
+      aliases: {}
     }
     this.countUp = this.countUp.bind(this);
     this.startCounting = this.startCounting.bind(this);
@@ -50,22 +51,23 @@ class Speech extends Component {
     this.handleListen = this.handleListen.bind(this)
     this.toggleSeen = this.toggleSeen.bind(this)
     this.addToAliases = this.addToAliases.bind(this)
-
     //TODO: ensure this is right
     allCards = this.state.cardArray;
 
   }
 
-  addToAliases (card){
-    console.log(card)
-    this.state.aliases.push(card)
-    // this.setState({ aliases: this.state.aliases.push(card) });
-    console.log(this.state.aliases);
-  }
-
   toggleSeen() {
     this.setState({ seen: !this.state.seen });
   }
+
+  addToAliases (cards){
+    this.setState ({ aliases: cards });
+    console.log(this.state.aliases)
+    //TODO: not sure if a += should go here
+    // this.setState ({ [this.state.aliases]: this.state.aliases + cards });
+
+  }
+
 
   //string and one card
   isPlayable(card) {
@@ -116,6 +118,21 @@ class Speech extends Component {
     document.getElementById("justPlayed").src = justPlayed;
   }
 
+
+  //TODO: this is suspect
+  checkAliases(str){
+    
+      for (const [key, value] of Object.entries(this.state.aliases)) {
+        console.log(key, value);
+        for (var i=0; i< value.length; i++){
+          console.log(value);
+          if (value[i]===str)
+            return key;
+        }
+      }
+      return null;
+  }
+
   searchArr(str, arr) {
     var query = str.toLowerCase();
     var manualAddCheck = query.split(' ');
@@ -127,6 +144,13 @@ class Speech extends Component {
     }
 
     document.getElementById('interim').style.color = "black";
+
+    //check the aliases first 
+    var aliasCheck = this.checkAliases(query);
+    if (this.checkAliases(str) != null){
+      console.log("Alias found!!!")
+      query = aliasCheck;
+    }
 
     for (var i = 0; i < arr.length; i++) {
       if (isAlias(query, arr[i])) {
@@ -216,6 +240,8 @@ class Speech extends Component {
 
   handleListen() {
 
+    console.log(this.state.aliases);
+
     if (this.state.listening) {
       recognition.start()
       recognition.onend = () => {
@@ -273,8 +299,9 @@ class Speech extends Component {
     if (isLoading) return (<div>Loading ...</div>)
     if (this.state.seen === false) {
       return <Alias 
-      toggleSeen = {() => this.toggleSeen}
+      toggleSeen = {this.toggleSeen}
       addToAliases = {this.addToAliases}
+      aliases = {this.state.aliases}
         />
     }
 
