@@ -19,7 +19,6 @@ Currently the api has only been tested on Chrome.  Be sure to enable microphone 
 
 ## To Do:
     
-    • UI improvements
     • Host on AWS
 
 
