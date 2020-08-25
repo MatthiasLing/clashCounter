@@ -64,6 +64,35 @@ class Speech extends Component {
     this.setState ({ aliases: cards });
   }
 
+  reset(){
+
+    mode = 1;
+    loading = 0;
+    deck = [];
+    this.setState ({ aliases: {} });
+
+    inHand = [0, 0, 0, 0];
+    inCycle = [];
+    playHistory = [];
+    document.getElementById("justPlayed").src  = blank;
+    counting = false;
+    loading = 0;
+
+    for (var i=0;i<4;i++)
+      document.getElementById("myImg" + i).src = blank;
+
+    clearInterval(this.state.timeID);
+    if(this.state.listening){
+      this.toggleListen();            
+    }
+    this.setState({ timeID: null });
+    this.setState(({}) => ({ elapsedTime: 0 }));
+    buttonText = 'Start Listening';
+    this.tick = 0;
+
+    this.setState(({ }) => ({ elixir: 5 }));
+  }
+
 
   //string and one card
   isPlayable(card) {
@@ -127,10 +156,14 @@ class Speech extends Component {
     var query = str.toLowerCase();
     var manualAddCheck = query.split(' ');
 
+    if (query== "game over"){
+      this.reset();
+    }
+
     //check for manual add
     var command = isCommand(manualAddCheck, this.state.elixir);
     if (command >= 0) {
-      this.setState(({ elixir }) => ({ elixir: command }));
+      this.setState(({  }) => ({ elixir: command }));
     }
 
     document.getElementById('interim').style.color = "black";
@@ -256,6 +289,7 @@ class Speech extends Component {
           finalTranscript = transcript + ' ';
         }
       }
+
       document.getElementById('interim').innerHTML = finalTranscript
 
       //-------------------------COMMANDS------------------------------------

@@ -22,8 +22,8 @@ const AWS = require('aws-sdk');
 let awsConfig = {
   "region": "us-east-1",
   "endpoint": "http://dynamodb.us-east-1.amazonaws.com/",
-  "accessKeyId":,
-  "secretAccessKey": ,
+  "accessKeyId": "<key here>",
+  "secretAccessKey": "<key here>",
 }
 AWS.config.update(awsConfig);
 let client = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
@@ -56,11 +56,15 @@ class Alias extends Component {
   }
 
   async getBasic(){
+    if (id === null)
+    id = document.getElementById("fname").defaultValue;
+
     aliasList = await this.fetchOnebyKey(id);
     this.props.addToAliases(aliasList);
+    document.getElementById("fname").style.color = "green";
+
   }
   fetchOnebyKey (id) {
-
     var params = {
       TableName: "userTable",
       Key: {
@@ -94,6 +98,9 @@ class Alias extends Component {
 
   async saveBasic(){
     var worked = await this.save(id, aliasList)
+    if (worked === true){
+      document.getElementById("fname").style.color = "green";
+    }
   }
 
   save = function (id, lst) {
@@ -209,16 +216,17 @@ class Alias extends Component {
           <div style={{ color: 'gold', fontFamily: 'Clashfont', fontSize: '40px' }}>Aliases</div>
         </div>
         <div class="column" style={topRight}>
-          <input type="text" id="fname" class="form" style={playerID} 
+          <input type="text" id="fname" class="form" autocomplete="off" style={playerID} 
             defaultValue={id} onChange ={(event)=>{
             document.getElementById("fname").style.color = "black";
             id = event.target.value;
+
             }} >
           </input>
           <button type="button" id = "saveButton" style={button} onClick={
             ()=>{
+              id = document.getElementById("fname").value;
               if (state === 0){
-                // this.fetchOnebyKey(id)
                 this.getBasic();
               }else{
                 this.saveBasic();
