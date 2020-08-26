@@ -13,6 +13,7 @@ recognition.lang = 'en-US'
 
 //------------------------COMPONENT-----------------------------
 
+var finalTranscript = '';
 var id = '';
 var buttonText = "Start";
 var current = -1;
@@ -22,8 +23,8 @@ const AWS = require('aws-sdk');
 let awsConfig = {
   "region": "us-east-1",
   "endpoint": "http://dynamodb.us-east-1.amazonaws.com/",
-  "accessKeyId": "<key here>",
-  "secretAccessKey": "<key here>",
+  "accessKeyId": "",
+  "secretAccessKey": "",
 }
 AWS.config.update(awsConfig);
 let client = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
@@ -143,7 +144,7 @@ class Alias extends Component {
     }
     recognition.onstart = () => {
     }
-    let finalTranscript = ''
+    finalTranscript = ''
     recognition.onresult = event => {
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -187,6 +188,8 @@ class Alias extends Component {
   }
 
   incrementView(amt) {
+    document.getElementById('interim').innerHTML = "";
+    finalTranscript = '';
     current += amt;
     if (current === 99) {
       current = 0;
