@@ -170,7 +170,7 @@ class Speech extends Component {
 
     //check the aliases first 
     var aliasCheck = this.checkAliases(query);
-    if (this.checkAliases(str) != null){
+    if (this.checkAliases(query) != null){
       query = aliasCheck;
     }
 
