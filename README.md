@@ -17,8 +17,10 @@ Currently the api has only been tested on Chrome.  Be sure to enable microphone 
     • Work out edge cases - mirror
     • Store user data - Lists of aliases per key value stored successfully in dynamoDB and called as well
 
-## To Do:
-    
-    • Host on AWS
+## Gameplay: 
+![Screenshot](gameplay_images/start.png?raw=true)
+![Screenshot](gameplay_images/aliases.png?raw=true)
+![Screenshot](gameplay_images/in_game.png?raw=true)
+
 
 
